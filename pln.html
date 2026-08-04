@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narzędzie do liczenia pieniędzy</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+        }
+        .val-input {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .val-input:focus {
+            outline: none !important;
+        }
+        .val-input.ring-2 {
+            box-shadow: 0 0 0 2px #3b82f6 !important;
+            border-color: transparent !important;
+        }
+        .history-items {
+            line-height: 1.3;
+        }
+        #history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        #history-list::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950">
+
+    <div id="page-content" class="container mx-auto max-w-md p-4 pt-5 pb-24">
+        <div class="mb-5 space-y-2.5">
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">500 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum500">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(500)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(500)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val500" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(500)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(500)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">200 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum200">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(200)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(200)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val200" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(200)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(200)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">100 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum100">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(100)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(100)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val100" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(100)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(100)">+10</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mb-5 space-y-2.5">
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">50 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum50">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(50)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(50)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val50" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(50)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(50)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">20 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum20">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(20)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(20)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val20" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(20)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(20)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">10 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum10">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(10)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(10)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val10" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(10)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(10)">+10</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mb-5 space-y-2.5">
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">5 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum5">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(5)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(5)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val5" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(5)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(5)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">2 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum2">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(2)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(2)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val2" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(2)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(2)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">1 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum1">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(1)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(1)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val1" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(1)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(1)">+10</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5 space-y-2.5">
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.50 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum050">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.50)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.50)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val050" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.50)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.50)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.20 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum020">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.20)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.20)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val020" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.20)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.20)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.10 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum010">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.10)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.10)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val010" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.10)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.10)">+10</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5 space-y-2.5">
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.05 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum005">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.05)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.05)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val005" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.05)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.05)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.02 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum002">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.02)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.02)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val002" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.02)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.02)">+10</button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="flex">
+                    <p class="text-slate-300 font-semibold text-sm select-none">0.01 PLN</p>
+                    <div class="flex-grow"></div>
+                    <p class="text-slate-500 text-xs font-medium select-none tabular-nums" id="sum001">0 PLN</p>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="minus10(0.01)">-10</button>
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="minus(0.01)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+
+                    <input id="val001" class="val-input flex-1 min-w-0 bg-slate-800 border border-slate-700 text-white font-bold text-lg p-2 rounded-lg shadow-inner text-center tabular-nums focus:ring-2 focus:border-0 focus:ring-blue-500 focus:outline-0 cursor-pointer" type="text" inputmode="none" readonly autocomplete="off" value="0" />
+
+                    <button class="bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-11 shrink-0 transition" onclick="plus(0.01)"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                    <button class="bg-slate-800 hover:brightness-125 active:scale-95 border border-slate-700 text-blue-400 font-bold text-sm rounded-lg shadow-sm cursor-pointer select-none flex justify-center items-center h-11 w-14 shrink-0 transition" onclick="plus10(0.01)">+10</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="bottom-bar" class="fixed inset-x-0 bottom-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 shadow-lg z-50">
+        <div class="max-w-md mx-auto flex flex-row items-center p-4">
+            <div class="flex flex-row gap-1.5">
+                <button id="btn-clear" class="text-slate-400 hover:text-white p-2 bg-slate-800/60 hover:brightness-125 active:scale-95 transition rounded-lg" onclick="resetAll()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21" /><path d="M22 21H7" /><path d="m5 11 9 9" /></svg>
+                </button>
+                <button id="btn-copy" class="text-slate-400 hover:text-white p-2 bg-slate-800/60 hover:brightness-125 active:scale-95 transition rounded-lg" onclick="copyAll()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                </button>
+                <button id="btn-history" class="text-slate-400 hover:text-white p-2 bg-slate-800/60 hover:brightness-125 active:scale-95 transition rounded-lg" onclick="openHistory()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></svg>
+                </button>
+            </div>
+            <div class="flex-grow"></div>
+            <div class="text-end">
+                <p class="text-slate-500 text-[11px] font-semibold uppercase tracking-wider">RAZEM</p>
+                <p class="text-blue-400 font-bold text-xl leading-tight"><span id="total">0 PLN</span></p>
+            </div>
+        </div>
+
+        <div id="keypad-panel" class="hidden">
+            <div id="keypad" class="max-w-md mx-auto grid grid-cols-4 gap-2 px-3 pt-3 pb-3 select-none">
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('7')">7</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('8')">8</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('9')">9</button>
+                <button type="button" class="keypad-key bg-slate-700 hover:brightness-125 active:scale-95 text-white rounded-lg shadow-sm p-3 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('/')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="1"/><line x1="5" x2="19" y1="12" y2="12"/><circle cx="12" cy="18" r="1"/></svg>
+                </button>
+
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('4')">4</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('5')">5</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('6')">6</button>
+                <button type="button" class="keypad-key bg-slate-700 hover:brightness-125 active:scale-95 text-white rounded-lg shadow-sm p-3 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('*')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('1')">1</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('2')">2</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('3')">3</button>
+                <button type="button" class="keypad-key bg-slate-700 hover:brightness-125 active:scale-95 text-white rounded-lg shadow-sm p-3 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('-')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                </button>
+
+                <button type="button" class="keypad-key bg-slate-900 hover:brightness-125 active:scale-95 text-red-400 font-semibold text-base rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('C')">C</button>
+                <button type="button" class="keypad-key bg-slate-800 hover:brightness-125 active:scale-95 text-white font-semibold text-lg rounded-lg shadow-sm p-3 transition" onmousedown="event.preventDefault()" onclick="keypadPress('0')">0</button>
+                <button type="button" class="keypad-key bg-slate-900 hover:brightness-125 active:scale-95 text-white rounded-lg shadow-sm p-3 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('back')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" x2="12" y1="9" y2="15"/><line x1="12" x2="18" y1="9" y2="15"/></svg>
+                </button>
+                <button type="button" class="keypad-key bg-slate-700 hover:brightness-125 active:scale-95 text-white rounded-lg shadow-sm p-3 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('+')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+
+                <button type="button" onclick="closeKeypad()" class="keypad-key col-span-1 bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 active:scale-95 rounded-lg flex justify-center items-center transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <button type="button" class="keypad-key col-start-3 col-span-2 bg-blue-600 hover:brightness-110 active:scale-95 text-white rounded-lg shadow-sm p-2.5 flex justify-center items-center transition" onmousedown="event.preventDefault()" onclick="keypadPress('=')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="9" y2="9"/><line x1="5" x2="19" y1="15" y2="15"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="history-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] hidden items-center justify-center p-4" onclick="if(event.target === this) closeHistory()">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-full max-w-sm max-h-[80vh] flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-slate-800">
+                <h2 class="text-white font-bold">Historia obliczeń</h2>
+                <button onclick="closeHistory()" class="text-slate-400 hover:text-white active:scale-95 text-xl leading-none transition">&times;</button>
+            </div>
+            <div id="history-list" class="overflow-y-auto p-4 flex flex-col gap-2.5 flex-1"></div>
+            <div class="p-3 border-t border-slate-800">
+                <button onclick="clearHistory()" class="w-full text-red-400 text-sm font-semibold py-2.5 hover:brightness-125 active:scale-95 bg-red-500/10 rounded-lg transition">Wyczyść historię</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatAmount(value) {
+            let rounded = value.toFixed(2);
+            let parts = rounded.split('.');
+            let integerPart = parts[0];
+            let decimalPart = parts[1];
+
+            if (integerPart.length > 4) integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+            let display = integerPart;
+            if (decimalPart !== '00') display += ',' + decimalPart;
+            return display + ' PLN';
+        }
+
+        function updateTotal() {
+            let total = 0;
+            let sum500 = (parseFloat($('#val500').val()) || 0) * 500;
+            total += sum500;
+            $('#sum500').text(formatAmount(sum500));
+
+            let sum200 = (parseFloat($('#val200').val()) || 0) * 200;
+            total += sum200;
+            $('#sum200').text(formatAmount(sum200));
+
+            let sum100 = (parseFloat($('#val100').val()) || 0) * 100;
+            total += sum100;
+            $('#sum100').text(formatAmount(sum100));
+
+            // ---
+
+            let sum50 = (parseFloat($('#val50').val()) || 0) * 50;
+            total += sum50;
+            $('#sum50').text(formatAmount(sum50));
+
+            let sum20 = (parseFloat($('#val20').val()) || 0) * 20;
+            total += sum20;
+            $('#sum20').text(formatAmount(sum20));
+
+            let sum10 = (parseFloat($('#val10').val()) || 0) * 10;
+            total += sum10;
+            $('#sum10').text(formatAmount(sum10));
+
+            // ---
+
+            let sum5 = (parseFloat($('#val5').val()) || 0) * 5;
+            total += sum5;
+            $('#sum5').text(formatAmount(sum5));
+
+            let sum2 = (parseFloat($('#val2').val()) || 0) * 2;
+            total += sum2;
+            $('#sum2').text(formatAmount(sum2));
+
+            let sum1 = (parseFloat($('#val1').val()) || 0) * 1;
+            total += sum1;
+            $('#sum1').text(formatAmount(sum1));
+
+            // --- ---
+
+            let sum050 = (parseFloat($('#val050').val()) || 0) * 0.5;
+            total += sum050;
+            $('#sum050').text(formatAmount(sum050));
+
+            let sum020 = (parseFloat($('#val020').val()) || 0) * 0.2;
+            total += sum020;
+            $('#sum020').text(formatAmount(sum020));
+
+            let sum010 = (parseFloat($('#val010').val()) || 0) * 0.1;
+            total += sum010;
+            $('#sum010').text(formatAmount(sum010));
+
+            // ---
+
+            let sum005 = (parseFloat($('#val005').val()) || 0) * 0.05;
+            total += sum005;
+            $('#sum005').text(formatAmount(sum005));
+
+            let sum002 = (parseFloat($('#val002').val()) || 0) * 0.02;
+            total += sum002;
+            $('#sum002').text(formatAmount(sum002));
+
+            let sum001 = (parseFloat($('#val001').val()) || 0) * 0.01;
+            total += sum001;
+            $('#sum001').text(formatAmount(sum001));
+
+            $('#total').text(formatAmount(total));
+
+            saveCurrentState();
+        }
+
+        function denomId(value) {
+            if (value >= 1) return String(value);
+            return parseFloat(value).toFixed(2).toString().replace('.', '');
+        }
+
+        function adjust(value, step) {
+            let id = 'val' + denomId(value);
+            let current = parseInt($('#' + id).val()) || 0;
+            let next = Math.min(999999, Math.max(0, current + step));
+            $('#' + id).val(next);
+            rawExprMap[id] = String(next);
+            updateTotal();
+        }
+
+        function plus(value) {
+            adjust(value, 1);
+        }
+
+        function minus(value) {
+            adjust(value, -1);
+        }
+
+        function plus10(value) {
+            adjust(value, 10);
+        }
+
+        function minus10(value) {
+            adjust(value, -10);
+        }
+
+        let activeId = null;
+        let rawExprMap = {};
+
+        const OPERATOR_SYMBOLS = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+        const OPERATOR_REVERSE = { '−': '-', '×': '*', '÷': '/' };
+
+        function toLogicalExpr(str) {
+            return str.toString()
+                .replace(/[−×÷]/g, function(ch) { return OPERATOR_REVERSE[ch]; })
+                .replace(/\s+/g, '');
+        }
+
+        function formatExpr(expr) {
+            return expr.replace(/[+\-*/]/g, function(op) {
+                return ' ' + OPERATOR_SYMBOLS[op] + ' ';
+            });
+        }
+
+        function getRawExpr(id) {
+            if (!(id in rawExprMap)) rawExprMap[id] = toLogicalExpr($('#' + id).val());
+            return rawExprMap[id];
+        }
+
+        function setRawExpr(id, expr) {
+            rawExprMap[id] = expr;
+            $('#' + id).val(formatExpr(expr));
+        }
+
+        function safeEval(expr) {
+            expr = toLogicalExpr(expr).replace(/[+\-*/.]+$/, '');
+            if (expr === '') return 0;
+            if (!/^[0-9+\-*/]+$/.test(expr)) return NaN;
+            try {
+                return Function('"use strict"; return (' + expr + ')')();
+            } catch (e) {
+                return NaN;
+            }
+        }
+
+        function finalizeInput(id) {
+            if (!id) return;
+            let raw = getRawExpr(id);
+            let result = safeEval(raw);
+            if (isNaN(result)) result = 0;
+            result = Math.min(999999, Math.max(0, Math.round(result)));
+            rawExprMap[id] = String(result);
+            $('#' + id).val(result);
+            updateTotal();
+        }
+
+        const MAX_EXPR_LEN = 9;
+
+        function collapseExpr(expr) {
+            let result = safeEval(expr);
+            if (isNaN(result)) result = 0;
+            result = Math.min(999999, Math.max(0, Math.round(result)));
+            return String(result);
+        }
+
+        function keypadPress(key) {
+            if (!activeId) return;
+            let raw = getRawExpr(activeId);
+
+            if (key === 'C') {
+                setRawExpr(activeId, '0');
+                updateTotal();
+                return;
+            }
+
+            if (key === 'back') {
+                raw = raw.length > 1 ? raw.slice(0, -1) : '0';
+                setRawExpr(activeId, raw);
+                updateTotal();
+                return;
+            }
+
+            if (key === '=') {
+                finalizeInput(activeId);
+                return;
+            }
+
+            if (key === '+' || key === '-' || key === '*' || key === '/') {
+                if (/[+\-*/]$/.test(raw)) {
+                    raw = raw.slice(0, -1) + key;
+                } else {
+                    if (raw.length >= MAX_EXPR_LEN - 1) raw = collapseExpr(raw);
+                    raw = raw + key;
+                }
+                setRawExpr(activeId, raw);
+                updateTotal();
+                return;
+            }
+
+            // cyfra
+            raw = (raw === '0') ? key : raw + key;
+            if (raw.length > MAX_EXPR_LEN) return;
+            setRawExpr(activeId, raw);
+            updateTotal();
+        }
+
+        function updateContentPadding() {
+            let barHeight = $('#bottom-bar').outerHeight() || 0;
+            $('#page-content').css('padding-bottom', (barHeight + 16) + 'px');
+        }
+
+        function openKeypad() {
+            $('#keypad-panel').removeClass('hidden');
+            updateContentPadding();
+        }
+
+        function closeKeypad() {
+            $('#keypad-panel').addClass('hidden');
+            updateContentPadding();
+            if (document.activeElement && document.activeElement.classList.contains('val-input')) {
+                document.activeElement.blur();
+            }
+        }
+
+        $(window).on('resize', updateContentPadding);
+
+        function scrollFieldAboveKeypad(inputEl) {
+            let $row = $(inputEl).closest('.mb-3');
+            let rowHeight = $row.outerHeight() || $(inputEl).outerHeight() || 0;
+            let rowRect = $row[0].getBoundingClientRect();
+            let barTop = $('#bottom-bar')[0].getBoundingClientRect().top;
+            let delta = rowRect.bottom - (barTop - rowHeight);
+            if (delta > 0) {
+                window.scrollBy({ top: delta, behavior: 'smooth' });
+            }
+        }
+
+        $('.val-input').on('focus', function() {
+            $('.val-input').removeClass('ring-2 ring-blue-500');
+            $(this).addClass('ring-2 ring-blue-500');
+            activeId = $(this).attr('id');
+            rawExprMap[activeId] = toLogicalExpr($(this).val());
+            openKeypad();
+            let el = this;
+            setTimeout(function() {
+                scrollFieldAboveKeypad(el);
+            }, 50);
+        });
+
+        $('.val-input').on('focusout', function() {
+            finalizeInput($(this).attr('id'));
+        });
+
+        $(document).on('click', function(e) {
+            if ($(e.target).closest('#keypad-panel').length || $(e.target).closest('.val-input').length) return;
+            if (document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('val-input')) return;
+            closeKeypad();
+        });
+
+        const STATE_KEY = 'moneyCounter_state_pln';
+        const HISTORY_KEY = 'moneyCounter_history_pln';
+        const HISTORY_LIMIT = 50;
+
+        function getStateSnapshot() {
+            let state = {};
+            $('.val-input').each(function() {
+                state[$(this).attr('id')] = $(this).val();
+            });
+            return state;
+        }
+
+        function applyStateSnapshot(state) {
+            $('.val-input').each(function() {
+                let id = $(this).attr('id');
+                if (state && Object.prototype.hasOwnProperty.call(state, id)) {
+                    $(this).val(state[id]);
+                }
+            });
+        }
+
+        function hasNonZeroValues() {
+            let any = false;
+            $('.val-input').each(function() {
+                if ((parseInt($(this).val()) || 0) > 0) any = true;
+            });
+            return any;
+        }
+
+        function saveCurrentState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(getStateSnapshot()));
+        }
+
+        function loadCurrentState() {
+            let raw = localStorage.getItem(STATE_KEY);
+            if (!raw) return;
+            try {
+                applyStateSnapshot(JSON.parse(raw));
+            } catch (e) {}
+        }
+
+        function buildBreakdown() {
+            let items = [];
+            $('.val-input').each(function() {
+                let count = parseInt($(this).val()) || 0;
+                if (count <= 0) return;
+                let label = $(this).closest('.mb-3').find('p.font-bold').first().text();
+                items.push({ label: label, count: count });
+            });
+            return items;
+        }
+
+        function pluralPl(n, one, few, many) {
+            if (n === 1) return one;
+            let mod10 = n % 10, mod100 = n % 100;
+            if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return few;
+            return many;
+        }
+
+        function formatRelativeDate(dateStr) {
+            let date = new Date(dateStr);
+            let diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+
+            if (diffSec < 60) return 'Przed chwilą';
+
+            let diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return diffMin + ' ' + pluralPl(diffMin, 'minutę', 'minuty', 'minut') + ' temu';
+
+            let diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return diffHour + ' ' + pluralPl(diffHour, 'godzinę', 'godziny', 'godzin') + ' temu';
+
+            let diffDay = Math.floor(diffHour / 24);
+            if (diffDay <= 3) return diffDay + ' ' + pluralPl(diffDay, 'dzień', 'dni', 'dni') + ' temu';
+
+            let datePart = date.toLocaleDateString('pl-PL');
+            let timePart = date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            return datePart + ', ' + timePart;
+        }
+
+        function loadHistory() {
+            try {
+                return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveToHistory() {
+            let entry = {
+                date: new Date().toISOString(),
+                total: $('#total').text(),
+                items: buildBreakdown(),
+                state: getStateSnapshot()
+            };
+            let history = loadHistory();
+            history.unshift(entry);
+            if (history.length > HISTORY_LIMIT) history = history.slice(0, HISTORY_LIMIT);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        }
+
+        function renderHistoryList() {
+            let history = loadHistory();
+            let $list = $('#history-list');
+            $list.empty();
+
+            if (history.length === 0) {
+                $list.append('<p class="text-slate-500 text-sm text-center py-6">Brak zapisanych obliczeń.</p>');
+                return;
+            }
+
+            history.forEach(function(entry, index) {
+                let dateText = formatRelativeDate(entry.date);
+
+                let $card = $('<div class="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3"></div>');
+                let $header = $('<div class="flex justify-between items-start gap-2"></div>');
+                let $info = $('<div></div>');
+                $info.append($('<p class="text-slate-500 text-xs font-medium"></p>').text(dateText));
+                $info.append($('<p class="text-white font-bold"></p>').text(entry.total));
+                let $actions = $('<div class="flex gap-1.5 shrink-0"></div>');
+                let $restoreBtn = $('<button class="text-blue-300 text-xs font-semibold px-2.5 py-1 bg-blue-500/15 hover:brightness-125 active:scale-95 rounded-full transition">Przywróć</button>').on('click', function() { restoreHistoryEntry(index); });
+                let $deleteBtn = $('<button class="text-red-300 text-xs font-semibold px-2.5 py-1 bg-red-500/15 hover:brightness-125 active:scale-95 rounded-full transition">Usuń</button>').on('click', function() { deleteHistoryEntry(index); });
+                $actions.append($restoreBtn).append($deleteBtn);
+                $header.append($info).append($actions);
+                $card.append($header);
+
+                let $items = $('<div class="history-items text-slate-400 text-xs mt-1.5"></div>');
+                if (entry.items.length === 0) {
+                    $items.text('—');
+                } else {
+                    let maxLines = 2;
+                    let visibleItems = entry.items.slice(0, maxLines);
+                    let hasMore = entry.items.length > maxLines;
+                    visibleItems.forEach(function(it, i) {
+                        let text = it.label + ' × ' + it.count;
+                        if (hasMore && i === visibleItems.length - 1) text += ' …';
+                        $items.append($('<div></div>').text(text));
+                    });
+                }
+                $card.append($items);
+                $list.append($card);
+            });
+        }
+
+        function restoreHistoryEntry(index) {
+            let history = loadHistory();
+            let entry = history[index];
+            if (!entry) return;
+            applyStateSnapshot(entry.state);
+            updateTotal();
+            closeHistory();
+        }
+
+        function deleteHistoryEntry(index) {
+            let history = loadHistory();
+            history.splice(index, 1);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            renderHistoryList();
+        }
+
+        function openHistory() {
+            renderHistoryList();
+            $('#history-modal').removeClass('hidden').addClass('flex');
+        }
+
+        function closeHistory() {
+            $('#history-modal').addClass('hidden').removeClass('flex');
+        }
+
+        function clearHistory() {
+            if (confirm('Czy na pewno chcesz usunąć całą historię?')) {
+                localStorage.removeItem(HISTORY_KEY);
+                renderHistoryList();
+            }
+        }
+
+        window.addEventListener('beforeunload', function(e) {
+            if (hasNonZeroValues()) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        function resetAll() {
+            if(confirm('Czy na pewno chcesz zresetować wszystkie wartości? Bieżący stan zostanie zapisany w historii.')) {
+                if (hasNonZeroValues()) {
+                    saveToHistory();
+                }
+                $('.val-input').val('0');
+                updateTotal();
+            }
+        }
+
+        function copyAll() {
+            let toCopy = "";
+            if(parseInt($('#val500').val()) > 0) toCopy = toCopy + '500 zł (x' + $('#val500').val() + '): ' + $('#sum500').text() + '\n';
+            if(parseInt($('#val200').val()) > 0) toCopy = toCopy + '200 zł (x' + $('#val200').val() + '): ' + $('#sum200').text() + '\n';
+            if(parseInt($('#val100').val()) > 0) toCopy = toCopy + '100 zł (x' + $('#val100').val() + '): ' + $('#sum100').text() + '\n';
+            
+            if(parseInt($('#val50').val()) > 0) toCopy = toCopy + '50 zł (x' + $('#val50').val() + '): ' + $('#sum50').text() + '\n';
+            if(parseInt($('#val20').val()) > 0) toCopy = toCopy + '20 zł (x' + $('#val20').val() + '): ' + $('#sum20').text() + '\n';
+            if(parseInt($('#val10').val()) > 0) toCopy = toCopy + '10 zł (x' + $('#val10').val() + '): ' + $('#sum10').text() + '\n';
+            
+            if(parseInt($('#val5').val()) > 0) toCopy = toCopy + '5 zł (x' + $('#val5').val() + '): ' + $('#sum5').text() + '\n';
+            if(parseInt($('#val2').val()) > 0) toCopy = toCopy + '2 zł (x' + $('#val2').val() + '): ' + $('#sum2').text() + '\n';
+            if(parseInt($('#val1').val()) > 0) toCopy = toCopy + '1 zł (x' + $('#val1').val() + '): ' + $('#sum1').text() + '\n';
+            
+            // ---
+            
+            if(parseInt($('#val050').val()) > 0) toCopy = toCopy + '0.50 zł (x' + $('#val050').val() + '): ' + $('#sum050').text() + '\n';
+            if(parseInt($('#val020').val()) > 0) toCopy = toCopy + '0.20 zł (x' + $('#val020').val() + '): ' + $('#sum020').text() + '\n';
+            if(parseInt($('#val010').val()) > 0) toCopy = toCopy + '0.10 zł (x' + $('#val010').val() + '): ' + $('#sum010').text() + '\n';
+            
+            if(parseInt($('#val005').val()) > 0) toCopy = toCopy + '0.05 zł (x' + $('#val005').val() + '): ' + $('#sum005').text() + '\n';
+            if(parseInt($('#val002').val()) > 0) toCopy = toCopy + '0.02 zł (x' + $('#val002').val() + '): ' + $('#sum002').text() + '\n';
+            if(parseInt($('#val001').val()) > 0) toCopy = toCopy + '0.01 zł (x' + $('#val001').val() + '): ' + $('#sum001').text() + '\n';
+
+            if(toCopy !== '') {
+                toCopy = toCopy + '\nSuma: ' + $('#total').text();
+                navigator.clipboard.writeText(toCopy);
+            }
+
+            $('#btn-copy').html('<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>');
+
+            setTimeout(() => {
+                $('#btn-copy').html('<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>');
+            }, 800)
+        }
+
+        loadCurrentState();
+        updateTotal();
+        updateContentPadding();
+
+    </script>
+
+</body>
+</html>
