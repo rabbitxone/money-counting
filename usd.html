@@ -28,6 +28,23 @@
             box-shadow: 0 0 0 2px #3b82f6 !important;
             border-color: transparent !important;
         }
+        .denom-group + .denom-group {
+            position: relative;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+        }
+        .denom-group + .denom-group::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(100, 116, 139, 0.55) 20%, rgba(100, 116, 139, 0.55) 80%, transparent);
+        }
+        .denom-group > div:last-child {
+            margin-bottom: 0;
+        }
         .history-items {
             line-height: 1.3;
         }
@@ -43,7 +60,7 @@
 <body class="bg-slate-950">
 
     <div id="page-content" class="container mx-auto max-w-md p-4 pt-5 pb-24">
-        <div class="mb-5 space-y-2.5">
+        <div class="denom-group mb-5 space-y-2.5">
             <div class="mb-3">
                 <div class="flex">
                     <p class="text-slate-300 font-semibold text-sm select-none">100 USD</p>
@@ -63,7 +80,7 @@
             </div>
         </div>
 
-        <div class="mb-5 space-y-2.5">
+        <div class="denom-group mb-5 space-y-2.5">
             <div class="mb-3">
                 <div class="flex">
                     <p class="text-slate-300 font-semibold text-sm select-none">50 USD</p>
@@ -115,7 +132,7 @@
             </div>
         </div>
 
-        <div class="mb-5 space-y-2.5">
+        <div class="denom-group mb-5 space-y-2.5">
             <div class="mb-3">
                 <div class="flex">
                     <p class="text-slate-300 font-semibold text-sm select-none">5 USD</p>
@@ -166,7 +183,7 @@
             </div>
         </div>
 
-        <div class="mb-5 space-y-2.5">
+        <div class="denom-group mb-5 space-y-2.5">
             <div class="mb-3">
                 <div class="flex">
                     <p class="text-slate-300 font-semibold text-sm select-none">0.50 USD</p>
@@ -217,7 +234,7 @@
             </div>
         </div>
 
-        <div class="mb-5 space-y-2.5">
+        <div class="denom-group mb-5 space-y-2.5">
             <div class="mb-3">
                 <div class="flex">
                     <p class="text-slate-300 font-semibold text-sm select-none">0.05 USD</p>
